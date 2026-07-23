@@ -1,4 +1,4 @@
-#  Protanki Mine Autobuyer
+## Protanki Mine Autobuyer
 
 An automated desktop application built with Python and Tkinter to automatically purchase mine supplies on ProTanki servers. Built using the **[ProboTanki-Lib](https://github.com/Teinc3/ProboTanki-Lib)** protocol library.
 
