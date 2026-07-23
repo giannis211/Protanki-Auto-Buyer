@@ -11,7 +11,7 @@ An automated desktop application built with Python and Tkinter to automatically 
 
 ### Downloads
 
-* **[Download Prebuilt App (.exe)]([https://github.com/giannis211/Protanki-Auto-Buyer/releases/download/v1/MineBuyer.exe])**
+* **[Download Prebuilt App (.exe)](https://github.com/giannis211/Protanki-Auto-Buyer/releases/download/v1/MineBuyer.exe)**
 * **[ProboTanki-Lib Source Repository](https://github.com/Teinc3/ProboTanki-Lib)**
 
 
