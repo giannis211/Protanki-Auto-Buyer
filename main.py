@@ -24,7 +24,6 @@ PRICE_KEY_CANDIDATES = ["next_price", "price", "cost", "base_price", "basePrice"
 
 
 def resource_path(relative_path: str) -> str:
-
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
@@ -76,7 +75,6 @@ class GuiBuyProcessor(AsyncAbstractProcessor[Any, Any]):
             self._sync_owned_count()
 
     def _sync_owned_count(self):
-
         item = self.find_item(PRICE_LOOKUP_ID)
         if item is not None and "count" in item:
             self.owned_count = int(item["count"])
@@ -136,7 +134,6 @@ class GuiBuyProcessor(AsyncAbstractProcessor[Any, Any]):
         return self.resolved_price
 
     async def buy(self, count: int) -> bool:
-
         if self.resolved_price is None:
             raise RuntimeError("Price not resolved yet")
 
@@ -190,8 +187,6 @@ class BuyMineInstance(AsyncTankiInstance):
 
 
 class NetworkThread(threading.Thread):
-
-
     def __init__(self, username: str, password: str, event_queue: "queue.Queue"):
         super().__init__(daemon=True)
         self.username = username
@@ -258,7 +253,7 @@ class NetworkThread(threading.Thread):
             return
 
         self.events.put({"kind": "ready", "price": price, "crystals": proc.crystals,
-                          "owned": proc.owned_count})
+                         "owned": proc.owned_count})
 
         while True:
             if self.auto_buy_enabled.is_set():
@@ -304,13 +299,12 @@ class NetworkThread(threading.Thread):
         asyncio.run_coroutine_threadsafe(self.instance.processor.request_garage(), self.loop)
 
     def start_auto_buy(self, count: int, interval_ms: int):
-        self.auto_buy_count = max(1, count)
+        self.auto_buy_count = min(max(1, count), 9999)
         self.auto_buy_interval_ms = max(1, interval_ms)
         self.auto_buy_enabled.set()
 
     def stop_auto_buy(self):
         self.auto_buy_enabled.clear()
-
 
 
 class App(tk.Tk):
@@ -373,7 +367,6 @@ class App(tk.Tk):
         self.net = NetworkThread(username, password, self.event_queue)
         self.net.start()
 
-
     def _build_main_frame(self):
         self.main_frame = ttk.Frame(self, padding=20)
         self.main_frame.pack(expand=True, fill="both")
@@ -411,7 +404,7 @@ class App(tk.Tk):
 
         row2 = ttk.Frame(self.main_frame)
         row2.pack(fill="x", pady=(4, 6))
-        ttk.Label(row2, text="Count per buy:").pack(side="left")
+        ttk.Label(row2, text="Count per buy (max 9999):").pack(side="left")
         self.auto_count_var = tk.StringVar(value="1")
         ttk.Entry(row2, textvariable=self.auto_count_var, width=8).pack(side="left", padx=(6, 0))
 
@@ -439,7 +432,7 @@ class App(tk.Tk):
         if not self.net:
             return
         try:
-            count = max(1, int(self.manual_count_var.get()))
+            count = min(max(1, int(self.manual_count_var.get())), 9999)
         except ValueError:
             messagebox.showerror(APP_TITLE, "Count must be a whole number.")
             return
@@ -456,6 +449,9 @@ class App(tk.Tk):
             return
         if count < 1:
             messagebox.showerror(APP_TITLE, "Count per buy must be at least 1.")
+            return
+        if count > 9999:
+            messagebox.showerror(APP_TITLE, "Count per buy cannot exceed 9999.")
             return
         if interval < 1:
             messagebox.showerror(APP_TITLE, "Interval must be at least 1 ms.")
